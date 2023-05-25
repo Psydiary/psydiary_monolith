@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  validates_presence_of :name, :email, :password, :ip_address, :on => :create
+  validates_presence_of :name, :email, :password, :on => :create
 
   validates_uniqueness_of :email, :on => :create
 
@@ -28,6 +28,20 @@ class User < ApplicationRecord
       u.ip_address = response[:ip_address]
       u.protocol_id = 1
     end
+  end
+
+  def first_name
+    name.split.first
+  end
+
+  def recent_entries
+    entries = (microdose_log_entries + daily_log_entries).sort_by { |entry| entry.created_at }.reverse[0..2]
+    if !entries.empty?
+      entries
+    else
+      "Nothing here yet.... Make a new entry above!"
+    end
+
   end
 
   private
